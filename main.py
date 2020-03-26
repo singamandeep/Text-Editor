@@ -31,6 +31,9 @@ fontColor ='#000000'
 fontBackground= '#FFFFFF'
 status_message = "File without save"
 
+class TextEditor:
+	file_types = ".csv .txt .c .cpp .py .json .css .js .sql .md .php .htm .html .gitignore .srt .sub"
+
 def make_tag():
 	current_tags = text.tag_names()
 	if "bold" in current_tags:
@@ -69,15 +72,15 @@ def new(event=None):
 
 def open_file(event=None):
 	new()
-	file = filedialog.askopenfile()
+	file = filedialog.askopenfile(filetypes=[("text files", TextEditor.file_types)])
 	global file_name
 	file_name = file.name
-	text.insert(INSERT , file.read())
+	text.insert(INSERT, file.read())
 
 def save(event=None):
 	global file_name
 	if file_name == "":
-		path = filedialog.asksaveasfilename()
+		path = filedialog.asksaveasfilename(filetypes=[("text files", TextEditor.file_types)])
 		file_name = path
 	master.title(file_name + " - Script Editor")
 	write = open(file_name, mode='w')
