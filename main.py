@@ -12,7 +12,6 @@ import os
 import tkMessageBox as messagebox
 from tkFileDialog import askopenfilename
 
-
 # creating the root of the window.
 master = Tk()
 master.title("Untitled* - Script Editor")
@@ -23,14 +22,14 @@ master.resizable(True, True)
 master.minsize(600, 550) # minimimum size possible
 
 # --------------- METHODS ---------------- #
-
 # MAIN MENU METHODS 
-
+saved=False
 file_name = "" # Current file name.
 current_font_family = "Liberation Mono"
 current_font_size = 12
 fontColor ='#000000'
 fontBackground= '#FFFFFF'
+status_message = "File without save"
 
 def make_tag():
 	current_tags = text.tag_names()
@@ -82,7 +81,14 @@ def save(event=None):
 		file_name = path
 	master.title(file_name + " - Script Editor")
 	write = open(file_name, mode='w')
-	write.write(text.get("1.0", END))
+	lines = write.write(text.get("1.0", END))
+	if lines > 0:
+		global saved
+		global status_message
+		global status
+		saved = True
+		status_message = "Saved"
+		status.configure(text=status_message)
 
 def save_as(event=None):
 	if file_name == "":
@@ -114,8 +120,13 @@ def rename(event=None):
 
 
 def close(event=None):
-	save()
-	master.quit()
+	global saved
+	if not saved:
+		save()
+
+	ans = messagebox.askquestion(title="Exit", message="Do you want to exit?", icon='warning')
+	if ans == 'yes':
+		master.quit()
 
 # EDIT MENU METHODS
 
@@ -485,7 +496,7 @@ align_right_button.config(image=image_align_right)
 align_right_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
 # STATUS BAR
-status = Label(master, text="", bd=1, relief=SUNKEN, anchor=W)
+status = Label(master, text=status_message, bd=1, relief=SUNKEN, anchor=W)
 
 # CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
 text_frame = Frame(master, borderwidth=1, relief="sunken")
